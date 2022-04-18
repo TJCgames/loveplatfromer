@@ -6,22 +6,31 @@ function touch2 (toucher, touchee)
 	return false
 end
 
+function clampbetween (low, object, high)
+	if object < low then
+		return low
+	elseif object > high then
+		return high
+	else
+		return object
+end end
+
 function love.load()
 	horizontal = {
 		['player_start'] = 100,
 		['speed'] = 0,
-		['max_speed'] = 10,
-		['acceleration'] = 1,
+		['max_speed'] = 50,
+		['acceleration'] = 10,
 		['friction'] = 0.5
 	}
 	vertical = {
-		['player_start'] = 450,
+		['player_start'] = 250,
 		['speed'] = 0,
-		['max_speed'] = 20,
-		['acceleration'] = 1
+		['max_speed'] = 50,
+		['acceleration'] = 2
 	}
 	jump = {
-		['speed'] = 10,
+		['speed'] = 50,
 		['max_jumps'] = 2,
 		['current_jumps'] = 0,
 		['coyote_time'] = 0.25,
@@ -44,13 +53,13 @@ function love.update(dt)
 	jump.current_jumps = 0
 	if love.keyboard.isDown('d', 'right') and not love.keyboard.isDown('a', 'left') then
 		if horizontal.speed < 0 then
-			horizontal.speed = horizontal.speed + 2 * horizontal.acceleration
+			horizontal.speed = horizontal.speed + horizontal.friction + horizontal.acceleration
 		else
 			horizontal.speed = horizontal.speed + horizontal.acceleration
 		end
 	elseif love.keyboard.isDown('a', 'left') and not love.keyboard.isDown('d', 'right') then
 		if horizontal.speed > 0 then
-			horizontal.speed = horizontal.speed - 2 * horizontal.acceleration
+			horizontal.speed = horizontal.speed - horizontal.friction - horizontal.acceleration
 		else
 			horizontal.speed = horizontal.speed - horizontal.acceleration
 		end
@@ -61,11 +70,7 @@ function love.update(dt)
 			horizontal.speed = horizontal.speed + horizontal.friction
 		end
 	end
-	if horizontal.speed > horizontal.max_speed then
-		horizontal.speed = horizontal.max_speed
-	elseif horizontal.speed < -horizontal.max_speed then
-		horizontal.speed = -horizontal.max_speed
-	end
+	horizontal.speed = clampbetween(- horizontal.max_speed, horizontal.speed, horizontal.max_speed)
 	horizontal.player_start = horizontal.player_start + horizontal.speed * dt
 	ball.b:setPosition(horizontal.player_start, vertical.player_start)
 	world:update(dt)
@@ -79,9 +84,7 @@ function love.update(dt)
 	else
 		vertical.speed = vertical.speed - vertical.acceleration
 	end
-	if vertical.speed > vertical.max_speed then
-		vertical.speed = vertical.max_speed
-	end
+	vertical.speed = math.max(vertical.speed, - vertical.max_speed)
 	vertical.player_start = vertical.player_start - vertical.speed * dt
 	ball.b:setPosition(horizontal.player_start, vertical.player_start)
 	world:update(dt)
