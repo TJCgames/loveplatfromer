@@ -17,7 +17,7 @@ function love.load()
 	vertical = {
 		['player_start'] = 450,
 		['speed'] = 0,
-		['max_speed'] = 20
+		['max_speed'] = 20,
 		['acceleration'] = 1
 	}
 	jump = {
@@ -30,14 +30,14 @@ function love.load()
 
 	world = love.physics.newWorld(0, 0, true)
 	ball = {}
-    ball.b = love.physics.newBody(world, horizontal.player_start, vertical.player_start, "dynamic")
-    ball.s = love.physics.newCircleShape(50)
-    ball.f = love.physics.newFixture(ball.b, ball.s)
+        ball.b = love.physics.newBody(world, horizontal.player_start, vertical.player_start, "dynamic")
+        ball.s = love.physics.newCircleShape(50)
+        ball.f = love.physics.newFixture(ball.b, ball.s)
 	statics = {{}}
-    statics[1].b = love.physics.newBody(world, 0, 500, "static")
-    statics[1].s = love.physics.newRectangleShape(800, 100)
-    statics[1].f = love.physics.newFixture(statics[1].b, statics[1].s)
-    statics[1].f:setUserData("Block")
+        statics[1].b = love.physics.newBody(world, 0, 500, "static")
+        statics[1].s = love.physics.newRectangleShape(800, 100)
+        statics[1].f = love.physics.newFixture(statics[1].b, statics[1].s)
+        statics[1].f:setUserData("Block")
 end
 
 function love.update(dt)
@@ -61,10 +61,10 @@ function love.update(dt)
 			horizontal.speed = horizontal.speed + horizontal.friction
 		end
 	end
-	if horizontal.speed > mhorizontal.speed then
-		horizontal.speed = mhorizontal.speed
-	elseif horizontal.speed < -mhorizontal.speed then
-		horizontal.speed = -mhorizontal.speed
+	if horizontal.speed > horizontal.max_speed then
+		horizontal.speed = horizontal.max_speed
+	elseif horizontal.speed < -horizontal.max_speed then
+		horizontal.speed = -horizontal.max_speed
 	end
 	horizontal.player_start = horizontal.player_start + horizontal.speed * dt
 	ball.b:setPosition(horizontal.player_start, vertical.player_start)
